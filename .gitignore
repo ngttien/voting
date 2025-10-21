@@ -1,0 +1,22 @@
+# Node modules (cho cả backend, frontend, blockchain)
+node_modules/
+*/node_modules/
+
+# Environment files
+.env
+*/.env
+
+# Build/dist
+dist/
+build/
+*/dist/
+*/build/
+
+# Logs
+*.log
+
+# IDE / hệ thống
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
