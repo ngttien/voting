@@ -1,24 +1,39 @@
-const fetchContractCandidates = async () => {
-  if (!contract) return; // chưa load contract
-  setLoading(true);
-  setError(null);
+import React, { useContext } from "react";
+import { BlockchainContext } from "../context/BlockchainContext";
+import CandidateCard from "../components/CandidateCard";
+import "../App.css";
 
-  try {
-    // Lấy danh sách ứng viên từ blockchain
-    const candidates = await contract.methods.getAllCandidates().call();
+const VotePage = () => {
+  const { candidates, vote, isLoading } = useContext(BlockchainContext);
 
-    // Format dữ liệu cho frontend
-    const formattedCandidates = candidates.map((c) => ({
-      id: Number(c.id),
-      name: c.name,
-      voteCount: Number(c.voteCount),
-    }));
-
-    setCandidates(formattedCandidates);
-  } catch (err) {
-    console.error(" Lỗi lấy ứng viên từ contract:", err);
-    setError("Không thể tải ứng viên từ blockchain.");
+  if (isLoading) {
+    return (
+      <div className="main-content">
+        <h2>Đang xử lý phiếu bầu...</h2>
+        <p>Vui lòng chờ xác nhận giao dịch trên MetaMask.</p>
+      </div>
+    );
   }
 
-  setLoading(false);
+  return (
+    <div className="main-content vote-page">
+      <h2>Danh sách ứng viên</h2>
+      <div className="candidate-list">
+        {candidates && candidates.length > 0 ? (
+          candidates.map((candidate) => (
+            <CandidateCard
+              key={candidate.id}
+              candidate={candidate}
+              onVote={vote}
+            />
+          ))
+        ) : (
+          <p>Chưa có ứng viên nào được thêm vào.</p>
+        )}
+      </div>
+    </div>
+  );
 };
+
+// Dòng này rất quan trọng
+export default VotePage;

@@ -1,54 +1,26 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { BlockchainContext } from "../context/BlockchainContext";
+import "../App.css"; // Giữ lại CSS
 
 const ResultsPage = () => {
-  const { contract } = useContext(BlockchainContext);
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // Lấy 'candidates' và 'isLoading' từ Context (do Ethers cung cấp)
+  const { candidates, isLoading } = useContext(BlockchainContext);
 
-  useEffect(() => {
-    const fetchResults = async () => {
-      if (contract) {
-        setLoading(true);
-        try {
-          // 1. CÚ PHÁP WEB3.JS ĐỂ ĐỌC DỮ LIỆU
-          // Dùng .methods.tên_hàm().call()
-          // Dựa trên ABI, bạn có hàm getAllCandidates()
-          const fetchedCandidates = await contract.methods
-            .getAllCandidates()
-            .call();
+  if (isLoading) return <p>Đang tải kết quả...</p>;
+  if (!candidates || candidates.length === 0) {
+    return <p>Chưa có ứng viên nào để hiển thị. Vui lòng kết nối ví.</p>;
+  }
 
-          // 2. Xử lý dữ liệu trả về
-          // Web3.js (v4.x) trả về BigInt (giống Ethers v6)
-          const formattedResults = fetchedCandidates.map((candidate) => ({
-            id: candidate.id.toString(), // Chuyển BigInt sang String
-            name: candidate.name,
-            voteCount: candidate.voteCount.toString(), // Chuyển BigInt sang String
-          }));
+  // Sắp xếp kết quả (tùy chọn)
+  const sortedResults = [...candidates].sort(
+    (a, b) => b.voteCount - a.voteCount
+  );
 
-          // Sắp xếp
-          formattedResults.sort(
-            (a, b) => Number(b.voteCount) - Number(a.voteCount)
-          );
-
-          setResults(formattedResults);
-        } catch (error) {
-          console.error("Không thể lấy kết quả từ contract:", error);
-        }
-        setLoading(false);
-      }
-    };
-
-    fetchResults();
-  }, [contract]); // Chạy lại khi contract sẵn sàng
-
-  if (loading) return <p>Đang tải kết quả...</p>;
-  if (!contract) return <p>Vui lòng kết nối ví để xem kết quả.</p>;
-
-  // 3. Phần return JSX y hệt như trước
   return (
-    <div className="page-container">
-      <h2>Kết Quả Bỏ Phiếu (On-Chain)</h2>
+    <div className="main-content">
+      {" "}
+      {/* Đổi tên class nếu cần */}
+      <h2>Kết Quả Bỏ Phiếu</h2>
       <table className="results-table">
         <thead>
           <tr>
@@ -58,7 +30,7 @@ const ResultsPage = () => {
           </tr>
         </thead>
         <tbody>
-          {results.map((candidate) => (
+          {sortedResults.map((candidate) => (
             <tr key={candidate.id}>
               <td>{candidate.id}</td>
               <td>{candidate.name}</td>

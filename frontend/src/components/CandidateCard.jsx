@@ -1,26 +1,37 @@
-import React from "react";
-//import './CandidateCard.css'; // Tạo file này để CSS
+import React, { useContext } from "react"; // Bỏ useState nếu không dùng
+import { BlockchainContext } from "../context/BlockchainContext";
+// Đảm bảo đây là import default (không có dấu ngoặc {})
+import CandidateCard from "../components/CandidateCard";
 
-const CandidateCard = ({ candidate, onSelect, isSelected }) => {
-  // candidate.name, candidate.description lấy từ API (backend MVC)
-  // candidate.voteCount lấy từ Smart Contract (đã được join ở VotePage)
+const VotePage = () => {
+  // Lấy isLoading từ context
+  const { candidates, vote, isLoading } = useContext(BlockchainContext);
+
+  // Nếu đang xử lý (sau khi bấm vote), hiển thị loading
+  if (isLoading) {
+    return (
+      <div className="main-content">
+        <h2>Đang xử lý phiếu bầu...</h2>
+        <p>Vui lòng chờ xác nhận giao dịch trên MetaMask.</p>
+      </div>
+    );
+  }
 
   return (
-    <div
-      className={`candidate-card ${isSelected ? "selected" : ""}`}
-      onClick={() => onSelect(candidate.id)}
-    >
-      {/* <img src={candidate.imageUrl || 'default-image.png'} alt={candidate.name} /> */}
-      <h3>{candidate.name}</h3>
-      <p>{candidate.description || "Chưa có mô tả"}</p>
-      {/* Hiển thị vote count (nếu có) */}
-      {candidate.voteCount !== undefined && (
-        <p>
-          <strong>Số phiếu: {candidate.voteCount}</strong>
-        </p>
-      )}
+    <div className="main-content vote-page">
+      <h2>Danh sách ứng viên</h2>
+      <div className="candidate-list">
+        {candidates.map((candidate) => (
+          <CandidateCard
+            key={candidate.id}
+            candidate={candidate}
+            onVote={vote} // Hàm vote từ context
+          />
+        ))}
+      </div>
     </div>
   );
 };
 
-export default CandidateCard;
+// Đảm bảo file này cũng export default
+export default VotePage;

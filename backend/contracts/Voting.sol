@@ -1,64 +1,45 @@
-// SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.20;
 
 contract Voting {
-    // -------------------------------
-    // Structs
-    // -------------------------------
+   
     struct Candidate {
         uint id;
         string name;
         uint voteCount;
     }
-
+  
     struct Voter {
+        string name;
+        bool isRegistered; // = true nếu được Admin đăng ký
         bool hasVoted;
         uint votedCandidateId;
     }
 
-    struct User {
-        uint id;
-        string name;
-    }
 
-    // -------------------------------
-    // State variables
-    // -------------------------------
     address public admin;
-
     uint public candidatesCount;
-    mapping(uint => Candidate) candidates;
-
-    mapping(address => Voter) voters;
-
-    uint public usersCount;
-    mapping(uint => User) users;
-
-    // -------------------------------
+    
+    mapping(uint => Candidate) public candidates;
+    
+    mapping(address => Voter) public voters;// dùng address làm khóa chính cho cử tri (voter)
     // Events
-    // -------------------------------
     event CandidateAdded(uint id, string name);
     event Voted(address voter, uint candidateId);
-    event UserAdded(uint id, string name);
+    
+    // Event mới cho việc đăng ký
+    event VoterRegistered(address voterAddress, string name);
+    event VoterRemoved(address voterAddress);
 
-    // -------------------------------
-    // Modifiers
-    // -------------------------------
     modifier onlyAdmin() {
         require(msg.sender == admin, "Chi admin moi duoc thuc hien");
         _;
     }
 
-    // -------------------------------
-    // Constructor
-    // -------------------------------
     constructor() {
         admin = msg.sender;
     }
 
-    // -------------------------------
-    // Candidate functions
-    // -------------------------------
     function addCandidate(string memory _name) public onlyAdmin {
         candidatesCount++;
         candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
@@ -78,62 +59,53 @@ contract Voting {
         return list;
     }
 
-    // -------------------------------
-    // Voting functions
-    // -------------------------------
+  //voting function
+   
     function vote(uint _candidateId) public {
-        require(!voters[msg.sender].hasVoted, "Ban da bo phieu roi");
+        // Lấy thông tin người gọi (msg.sender) //cái này quan trọng nè mấy má
+        Voter storage sender = voters[msg.sender];
+
+       
+        require(sender.isRegistered, "Ban khong co trong danh sach duoc phep bo phieu");
+        require(!sender.hasVoted, "Ban da bo phieu roi");
+      
+
         require(_candidateId > 0 && _candidateId <= candidatesCount, "Ung vien khong hop le");
 
-        voters[msg.sender] = Voter(true, _candidateId);
+        // Cập nhật state của cử tri
+        sender.hasVoted = true;
+        sender.votedCandidateId = _candidateId;
+        
+        // Cập nhật state của ứng viên
         candidates[_candidateId].voteCount++;
 
         emit Voted(msg.sender, _candidateId);
     }
 
-    function hasVoted(address _voter) public view returns (bool) {
-        return voters[_voter].hasVoted;
+  
+    //Đăng ký cử tri vào Whitelist
+    //Chỉ Admin được gọi
+  
+    function registerVoter(address _voterAddress, string memory _name) public onlyAdmin {
+        require(!voters[_voterAddress].isRegistered, "Cu tri nay da duoc dang ky");
+        voters[_voterAddress] = Voter(_name, true, false, 0);
+        emit VoterRegistered(_voterAddress, _name);
     }
 
-    function getVoter(address _voter) public view returns (Voter memory) {
-        return voters[_voter];
-    }
 
-    // -------------------------------
-    // User functions
-    // -------------------------------
-    function addUser(uint _id, string memory _name) public onlyAdmin {
-        require(bytes(users[_id].name).length == 0, "User da ton tai");
-        users[_id] = User(_id, _name);
-        usersCount++;
-        emit UserAdded(_id, _name);
+    function removeVoter(address _voterAddress) public onlyAdmin {
+        require(voters[_voterAddress].isRegistered, "Cu tri khong ton tai");
+        delete voters[_voterAddress];
+        emit VoterRemoved(_voterAddress);
     }
-
-    function getUser(uint _id) public view returns (User memory) {
-        require(bytes(users[_id].name).length != 0, "User khong ton tai");
-        return users[_id];
+    
+   
+    function getVoter(address _voterAddress) public view returns (Voter memory) {
+        require(voters[_voterAddress].isRegistered, "Cu tri khong ton tai");
+        return voters[_voterAddress];
     }
-
-    function getAllUsers() public view returns (User[] memory) {
-        User[] memory list = new User[](usersCount);
-        uint counter = 0;
-        for(uint i = 1; i <= usersCount; i++){
-            if(bytes(users[i].name).length != 0){ 
-                list[counter] = users[i];
-                counter++;
-            }
-        }
-        return list;
-    }
-
-    function updateUser(uint _id, string memory _name) public onlyAdmin {
-        require(bytes(users[_id].name).length != 0, "User khong ton tai");
-        users[_id].name = _name;
-    }
-
-    function deleteUser(uint _id) public onlyAdmin {
-        require(bytes(users[_id].name).length != 0, "User khong ton tai");
-        delete users[_id];
-        if(usersCount > 0) usersCount--;
+    
+      function hasVoted(address _voterAddress) public view returns (bool) {
+        return voters[_voterAddress].hasVoted;
     }
 }
