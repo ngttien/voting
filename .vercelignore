@@ -1,0 +1,6 @@
+backend/
+backend/**
+*.md
+!README.md
+.git/
+.gitignore

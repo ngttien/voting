@@ -1,0 +1,21 @@
+{
+  "name": "voting-dapp",
+  "version": "1.0.0",
+  "description": "Decentralized Voting Application on Ethereum Blockchain",
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install --legacy-peer-deps",
+    "build": "cd frontend && npm run build",
+    "start": "cd frontend && npm run dev",
+    "deploy:contract": "cd backend && npx truffle migrate --network sepolia --reset && node copy-abi.js"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "voting",
+    "dapp",
+    "solidity",
+    "react"
+  ],
+  "author": "",
+  "license": "MIT"
+}
