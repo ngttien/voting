@@ -11,12 +11,6 @@ Hệ thống bầu chọn phi tập trung cho phép tạo và quản lý nhiều
 - **Kết quả real-time**: Xem kết quả ngay lập tức
 - **Quản lý admin**: Thêm ứng viên, mở/đóng bầu cử
 
-## Demo
-
-**Smart Contract (Sepolia):** `0x5732Fb5f3D1265A4d489c2c3FA375F06bFf874e0`
-
-**Etherscan:** [Xem trên Sepolia Etherscan](https://sepolia.etherscan.io/address/0x5732Fb5f3D1265A4d489c2c3FA375F06bFf874e0)
-
 ## Công nghệ
 
 - **Frontend**: React 19, Vite, React Router
@@ -33,36 +27,12 @@ Hệ thống bầu chọn phi tập trung cho phép tạo và quản lý nhiều
 - MetaMask
 - Sepolia ETH test
 
-### Clone và cài đặt
-
-```bash
-# Clone repository
-git clone https://github.com/YOUR_USERNAME/voting-dapp.git
-cd voting-dapp
-
-# Cài đặt dependencies
-cd frontend
-npm install
-
-cd ../backend
-npm install
-```
-
-### Chạy local
-
-```bash
-# Frontend
-cd frontend
-npm run dev
-# Mở http://localhost:5173
-```
-
 ## Hướng dẫn sử dụng
 
 ### Cho người dùng:
 
 1. **Cài đặt MetaMask** và chuyển sang Sepolia testnet
-2. **Lấy ETH test** từ [Sepolia Faucet](https://sepoliafaucet.com)
+2. **Lấy ETH test** từ https://cloud.google.com/application/web3/faucet/ethereum/sepolia
 3. **Kết nối ví** trên ứng dụng
 4. **Tạo hoặc tham gia** cuộc bầu chọn
 
@@ -82,24 +52,6 @@ npm run dev
 3. Bỏ phiếu cho ứng viên
 4. Xem kết quả
 
-## Cấu trúc dự án
-
-```
-voting-dapp/
-├── frontend/               # React frontend
-│   ├── src/
-│   │   ├── components/    # React components
-│   │   ├── context/       # VotingFactoryContext
-│   │   ├── contracts/     # ABIs
-│   │   └── pages/         # Pages
-│   └── package.json
-├── backend/               # Smart contracts
-│   ├── contracts/        # VotingFactory.sol
-│   ├── migrations/       # Deployment scripts
-│   └── truffle-config.js
-└── README.md
-```
-
 ## Smart Contracts
 
 ### VotingFactory
@@ -114,61 +66,7 @@ voting-dapp/
 - Quản lý ứng viên và bỏ phiếu
 - Mỗi cuộc có admin riêng
 
-## Deploy lên Vercel
-
-### Bước 1: Push lên GitHub
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin https://github.com/YOUR_USERNAME/voting-dapp.git
-git push -u origin main
-```
-
-### Bước 2: Deploy trên Vercel
-
-1. Vào [Vercel](https://vercel.com)
-2. Sign up với GitHub
-3. Import project `voting-dapp`
-4. Cấu hình:
-   - Framework: Vite
-   - Root Directory: `frontend`
-   - Build Command: `npm run build`
-   - Output Directory: `dist`
-5. Click "Deploy"
-
-### Bước 3: Chia sẻ
-
-Sau khi deploy xong, bạn sẽ có URL:
-
-```
-https://your-project-name.vercel.app
-```
-
 Chia sẻ URL này với mọi người!
-
-Chi tiết xem [HUONG_DAN_DEPLOY_PUBLIC.md](./HUONG_DAN_DEPLOY_PUBLIC.md)
-
-## Tài liệu
-
-- [Hướng dẫn Deploy Public](./HUONG_DAN_DEPLOY_PUBLIC.md) - Deploy lên Vercel
-- [Deploy Success](./DEPLOY_SUCCESS.md) - Thông tin contract đã deploy
-- [Optimization Summary](./OPTIMIZATION_SUMMARY.md) - Tối ưu hóa code
-
-## Bảoo mật
-
-- Không commit private key lên GitHub
-- File `.env` đã được gitignore
-- Chỉ dùng trên Sepolia testnet
-- Smart contract đã được kiểm tra
-
-## Chi phí
-
-- **Vercel**: Miễn phí (100GB bandwidth/tháng)
-- **GitHub**: Miễn phí
-- **Sepolia ETH**: Miễn phí (test network)
-- **Gas fees**: Dùng ETH test (miễn phí)
 
 ## Troubleshooting
 
